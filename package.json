@@ -1,0 +1,30 @@
+{
+  "name": "nodreports",
+  "version": "0.0.1",
+  "description": "A document generator using Open Office Writer Documents as templates.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "gulp",
+    "test": "gulp test"
+  },
+  "keywords": [
+  ],
+  "author": "recyclebin5385",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "gulp": "^4.0.1",
+    "gulp-eslint": "^5.0.0",
+    "gulp-load-plugins": "^1.5.0"
+  },
+  "dependencies": {
+    "handlebars": "^4.1.2",
+    "jszip": "^3.2.1",
+    "xmldom": "^0.1.27"
+  }
+}
