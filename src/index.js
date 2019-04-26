@@ -1,10 +1,14 @@
 const JSZip = require('jszip')
-const DOMParser = require('xmldom').DOMParser
+const xmldom = require('xmldom')
+const DOMParser = xmldom.DOMParser
+const XMLSerializer = xmldom.XMLSerializer
 const Handlebars = require('handlebars')
 
 const handlebarsEngine = {
-  engine: Handlebars,
-  createTemplate: Handlebars.compile,
+  handlebars: Handlebars,
+  createTemplate: function (text) {
+    return this.handlebars.compile(text)
+  },
   applyToTemplate: (template, root) => template(root)
 }
 
@@ -20,6 +24,58 @@ Template.loadTemplate = function (templateStream) {
 }
 
 Template.prototype.engine = handlebarsEngine
+
+Template.prototype.expandEmbeddedScript = function (text) {
+  const doc = new DOMParser().parseFromString(text)
+
+  Array.prototype.slice.call(doc.getElementsByTagName('text:text-input')).forEach(element => {
+    if (element.attributes &&
+      ((element.attributes.getNamedItem('text:description') || {}).value || '').toLowerCase() === 'nodscript') {
+      element.parentNode.replaceChild(doc.createTextNode(element.textContent), element)
+    }
+  })
+
+  Array.prototype.slice.call(doc.getElementsByTagName('text:script')).forEach(element => {
+    if (element.attributes &&
+      ((element.attributes.getNamedItem('script:language') || {}).value || '').toLowerCase() === 'nodscript') {
+      const script = element.textContent
+      const re = /\[@(\/)?(.*?)\]/g
+      const results = []
+      let lastTagName = ''
+      while (true) {
+        const result = re.exec(script)
+        if (!result) {
+          break
+        }
+        result.nextIndex = re.lastIndex
+        result.closing = !!result[1]
+        lastTagName = result.tagName = result[2] || lastTagName
+        results.push(result)
+      }
+      results.push({ index: script.length })
+
+      for (let i = 0; i < results.length - 1; i++) {
+        const scriptPart = script.substring(results[i].nextIndex, results[i + 1].index)
+
+        let ancestor = element
+        while (true) {
+          ancestor = ancestor.parentNode
+          if (!ancestor) {
+            break
+          }
+          if (ancestor.tagName === results[i].tagName) {
+            if (ancestor.parentNode) {
+              ancestor.parentNode.insertBefore(doc.createTextNode(scriptPart), results[i].closing ? ancestor.nextSibling : ancestor)
+            }
+          }
+        }
+      }
+      element.parentNode.removeChild(element)
+    }
+  })
+
+  return new XMLSerializer().serializeToString(doc)
+}
 
 Template.prototype.loadTemplate = function (templateStream) {
   this.readTemplatePromise = new Promise((resolve, reject) => {
@@ -43,7 +99,7 @@ Template.prototype.loadTemplate = function (templateStream) {
             .then(content => {
               entries.push({
                 name: zipObject.name,
-                contentTemplate: this.engine.createTemplate(content)
+                contentTemplate: this.engine.createTemplate(this.expandEmbeddedScript(content))
               })
             })
         } else {
