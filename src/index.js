@@ -130,7 +130,7 @@ Template.prototype.dump = function (root, options) {
           zip.file(entry.name, entry.content)
         }
       })
-      return zip.generateNodeStream(options)
+      return zip.generateNodeStream(options.jszip)
     })
 }
 
