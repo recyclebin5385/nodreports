@@ -39,7 +39,7 @@ Template.prototype.expandEmbeddedScript = function (text) {
     if (element.attributes &&
       ((element.attributes.getNamedItem('script:language') || {}).value || '').toLowerCase() === 'nodscript') {
       const script = element.textContent
-      const re = /\[@(\/)?(.*?)\]/g
+      const re = /^\s*@(\/)?(.*?)\s*$/gm
       const results = []
       let lastTagName = ''
       while (true) {
