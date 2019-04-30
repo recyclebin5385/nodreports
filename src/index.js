@@ -12,19 +12,46 @@ const handlebarsEngine = {
   applyToTemplate: (template, root) => template(root)
 }
 
+/**
+ * nodreports module.
+ *
+ * @module nodreports
+ */
+
+/**
+ * Create the template.
+ *
+ * @constructor
+ */
 function Template () {
 }
 
-Template.loadTemplate = function (templateStream) {
+/**
+ * Load a OpenOffice Document from a stream and create a template.
+ *
+ * @param {Stream} stream The stream from which the document is read
+ * @returns {Template} the template
+ */
+Template.load = function (stream) {
   const ret = new Template()
-  if (templateStream) {
-    ret.loadTemplate(templateStream)
-  }
+  ret.load(stream)
   return ret
 }
 
+/**
+ * The "engine" of the template.
+ *
+ * An engine is an object which actually converts the content of the template and resolves embedded expressions.
+ */
 Template.prototype.engine = handlebarsEngine
 
+/**
+ * Replace embedded scripts in content.xml and convert the XML so that the engine can process it.
+ *
+ * @private
+ * @param {string} text The string expression of content.xml before conversion
+ * @returns {string} The string expression of content.xml after conversion
+ */
 Template.prototype.expandEmbeddedScript = function (text) {
   const doc = new DOMParser().parseFromString(text)
 
@@ -77,10 +104,16 @@ Template.prototype.expandEmbeddedScript = function (text) {
   return new XMLSerializer().serializeToString(doc)
 }
 
-Template.prototype.loadTemplate = function (templateStream) {
+/**
+ * Load an OpenOffice Document from a stream and store the content in it.
+ *
+ * @param {Stream} stream The stream from which the document is read
+ * @returns {Template} the object itself
+ */
+Template.prototype.load = function (stream) {
   this.readTemplatePromise = new Promise((resolve, reject) => {
     let buffer = Buffer.from([])
-    templateStream.on('data', chunk => {
+    stream.on('data', chunk => {
       buffer = Buffer.concat([buffer, chunk])
     }).on('end', () => {
       resolve(buffer)
@@ -119,7 +152,21 @@ Template.prototype.loadTemplate = function (templateStream) {
   return this
 }
 
-Template.prototype.dump = function (root, options) {
+/**
+ * Process the template and generate a document asynchronously.
+ *
+ * The root is passed to the "engine" and will replace the expressions in the template.
+ *
+ * @see {@link https://stuk.github.io/jszip/documentation/api_jszip/generate_node_stream.html} for options.jszip.
+ *
+ * @async
+ * @param root The root context
+ * @param [options] The options
+ * @param [options.jszip] The options passed to jszip module
+ * @returns {Promise} The promise object representing the stream from which the generated document is read.
+ */
+Template.prototype.dumpAsync = function (root, options) {
+  options = options || {}
   return this.readTemplatePromise
     .then(entries => {
       const zip = new JSZip()
@@ -134,4 +181,13 @@ Template.prototype.dump = function (root, options) {
     })
 }
 
+/**
+ * The template class.
+ *
+ * @example
+ * var nodreports = require('nodreports')
+ * var Template = nodreports.Template
+ * var fs = require('fs')
+ * var template = Template.load(fs.createReadStream('template.odt'))
+ */
 exports.Template = Template

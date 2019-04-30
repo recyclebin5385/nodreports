@@ -15,5 +15,11 @@ function compile () {
     .pipe(gulp.dest('dist'))
 }
 
+function jsdoc () {
+  return gulp.src(['README.md', 'LICENSE.txt', './dist/**/*.js'], { read: false })
+    .pipe(plugins.jsdoc3())
+}
+
 exports.lint = jslint
-exports.default = gulp.series(jslint, compile)
+exports.doc = jsdoc
+exports.default = gulp.series(jslint, compile, jsdoc)
