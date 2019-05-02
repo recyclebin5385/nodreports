@@ -11,6 +11,7 @@
   "author": "recyclebin5385",
   "license": "BSD-2-Clause",
   "devDependencies": {
+    "del": "^4.1.1",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
@@ -21,11 +22,14 @@
     "gulp-eslint": "^5.0.0",
     "gulp-jsdoc3": "^2.0.0",
     "gulp-load-plugins": "^1.5.0",
+    "gulp-mocha": "^6.0.0",
     "gulp-replace": "^1.0.0",
-    "jsdoc": "^3.5.5"
+    "jsdoc": "^3.5.5",
+    "mocha": "^6.1.4"
   },
   "dependencies": {
     "handlebars": "^4.1.2",
+    "handlebars-helper-eval-js": "^0.1.1",
     "jszip": "^3.2.1",
     "xmldom": "^0.1.27"
   }

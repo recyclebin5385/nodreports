@@ -1,8 +1,13 @@
 const gulp = require('gulp')
 const plugins = require('gulp-load-plugins')()
+const del = require('del')
+
+function clean () {
+  return del(['dist', 'docs/gen', 'tmp'])
+}
 
 function jslint () {
-  return gulp.src(['./*.js', 'src/**/*.js'])
+  return gulp.src(['./*.js', 'src/**/*.js', 'test/**/*.js'])
     .pipe(plugins.eslint({
       useEslintrc: true
     }))
@@ -16,10 +21,17 @@ function compile () {
 }
 
 function jsdoc () {
-  return gulp.src(['README.md', 'LICENSE.txt', './dist/**/*.js'], { read: false })
+  return gulp.src(['README.md', './dist/**/*.js'], { read: false })
     .pipe(plugins.jsdoc3())
 }
 
+function test () {
+  return gulp.src('test/**/*.js', { read: false })
+    .pipe(plugins.mocha({ reporter: 'list', timeout: 60000 }))
+}
+
+exports.clean = clean
 exports.lint = jslint
 exports.doc = jsdoc
-exports.default = gulp.series(jslint, compile, jsdoc)
+exports.test = test
+exports.default = gulp.series(jslint, compile, jsdoc, test)
