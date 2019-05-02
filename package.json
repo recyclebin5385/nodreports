@@ -4,7 +4,10 @@
   "description": "A document generator using Open Office Writer Documents as templates.",
   "main": "dist/index.js",
   "scripts": {
+    "clean": "gulp clean",
     "build": "gulp",
+    "lint": "gulp lint",
+    "doc": "gulp doc",
     "test": "gulp test"
   },
   "keywords": [
@@ -15,6 +18,16 @@
   ],
   "author": "recyclebin5385",
   "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/recyclebin5385/nodreports.git"
+  },
+  "dependencies": {
+    "handlebars": "^4.1.2",
+    "handlebars-helper-eval-js": "^0.1.1",
+    "jszip": "^3.2.1",
+    "xmldom": "^0.1.27"
+  },
   "devDependencies": {
     "del": "^4.1.1",
     "eslint": "^5.16.0",
@@ -31,11 +44,5 @@
     "gulp-replace": "^1.0.0",
     "jsdoc": "^3.5.5",
     "mocha": "^6.1.4"
-  },
-  "dependencies": {
-    "handlebars": "^4.1.2",
-    "handlebars-helper-eval-js": "^0.1.1",
-    "jszip": "^3.2.1",
-    "xmldom": "^0.1.27"
   }
 }
