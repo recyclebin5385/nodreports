@@ -1,0 +1,7 @@
+.eslintrc*
+.gitignore
+gulpfile.js
+src
+test
+tmp
+*.tgz
