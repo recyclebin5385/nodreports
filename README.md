@@ -88,7 +88,7 @@ const template = Template.load(fs.createReadStream('template.odt'))
 
 template.dumpAsync(root, {
   jszip: {
-    streamFiles: true
+    streamFiles: true // Not necessary, but requires less memory if set to true
   }
 })
   .then(stream => {
@@ -97,7 +97,7 @@ template.dumpAsync(root, {
 ```
 
 By default, the loaded template has property "engine" which has property "handlebars".
-You can customize Handlebars module such as register additional Handlebars helpers through the property.
+You can customize Handlebars module via the property, such as register additional Handlebars helpers.
 
 Below is an example to add an additional helper.
 
@@ -110,7 +110,7 @@ template.engine.handlebars.registerHelper(require('handlebars-helper-eval-js')()
 
 ### version 0.1.0
 
-Released on 2019-5-5
+Released on 2019-5-3
 
  -  initial release
 
