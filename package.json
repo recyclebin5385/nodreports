@@ -7,7 +7,12 @@
     "build": "gulp",
     "test": "gulp test"
   },
-  "keywords": [],
+  "keywords": [
+    "handlebars",
+    "openoffice",
+    "libreoffice",
+    "odt"
+  ],
   "author": "recyclebin5385",
   "license": "BSD-2-Clause",
   "devDependencies": {
