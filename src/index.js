@@ -4,14 +4,6 @@ const DOMParser = xmldom.DOMParser
 const XMLSerializer = xmldom.XMLSerializer
 const Handlebars = require('handlebars')
 
-const handlebarsEngine = {
-  handlebars: Handlebars,
-  createTemplate: function (text) {
-    return this.handlebars.compile(text)
-  },
-  applyToTemplate: (template, root) => template(root)
-}
-
 /**
  * nodreports module.
  *
@@ -39,11 +31,39 @@ Template.load = function (stream) {
 }
 
 /**
- * The "engine" of the template.
+ * The engine of the template.
  *
  * An engine is an object which actually converts the content of the template and resolves embedded expressions.
- */
-Template.prototype.engine = handlebarsEngine
+ * The content of content.xml in the OpenOffice Writer Document is updated by the engine. */
+Template.prototype.engine = {
+
+  /**
+   * The Handlebars module.
+   */
+  handlebars: Handlebars,
+
+  /**
+   * Convert the content of context.xml into a template object.
+   *
+   * @param {string} text The content of content.xml
+   * @returns The template object
+   */
+  createTemplate: function (text) {
+    return this.handlebars.compile(text)
+  },
+
+  /**
+   * Apply the root context to the template and return the new content of content.xml.
+   *
+   * The template is an object returned by {@link createTemplate}.
+   * The root context is an arbitrary object with properties to be embedded into the template, typically a hash.
+   *
+   * @param template The template
+   * @param root The root context
+   * @returns {string} The new content of content.xml
+   */
+  applyToTemplate: (template, root) => template(root)
+}
 
 /**
  * Replace embedded scripts in content.xml and convert the XML so that the engine can process it.
